@@ -58,7 +58,7 @@ def train_one_epoch(model, loader, optimizer, criterion, device, use_amp=False):
 
         optimizer.zero_grad(set_to_none=True)
 
-        with torch.amp.autocast('cuda',enabled=use_amp):
+        with torch.amp.autocast('mps',enabled=use_amp):
             outputs = model(images)
             loss = criterion(outputs, labels)
 
@@ -71,7 +71,7 @@ def train_one_epoch(model, loader, optimizer, criterion, device, use_amp=False):
         total_correct += (preds == labels).sum().item()
         total_samples += images.size(0)
 
-    torch.cuda.synchronize()
+    torch.mps.synchronize()
     end = time.perf_counter()
 
     avg_loss = total_loss / total_samples
@@ -94,7 +94,7 @@ def evaluate(model, loader, criterion, device, use_amp=False):
         images = images.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True)
 
-        with torch.amp.autocast('cuda',enabled=use_amp):
+        with torch.amp.autocast('mps',enabled=use_amp):
             outputs = model(images)
             loss = criterion(outputs, labels)
 
@@ -103,7 +103,7 @@ def evaluate(model, loader, criterion, device, use_amp=False):
         total_correct += (preds == labels).sum().item()
         total_samples += images.size(0)
 
-    torch.cuda.synchronize()
+    torch.mps.synchronize()
     end = time.perf_counter()
 
     avg_loss = total_loss / total_samples
@@ -282,13 +282,13 @@ def main():
                         help="Override num_classes (for custom ImageNet-like dirs)")
     args = parser.parse_args()
 
-    if not torch.cuda.is_available():
-        print("CUDA not available. This benchmark is designed for a CUDA GPU.")
-        return
+    # if not torch.cuda.is_available():
+    #     print("CUDA not available. This benchmark is designed for a CUDA GPU.")
+    #     return
 
-    device = torch.device("cuda")
-    props = torch.cuda.get_device_properties(device)
-    print(f"Using device: {torch.cuda.get_device_name(device)}")
+    device = torch.device("mps")
+    props = torch.backends.mps.get_device_properties(device)
+    print(f"Using device: {torch.mps.get_device_name(device)}")
     print(f"  SMs: {props.multi_processor_count}, "
           f"Memory: {props.total_memory / 1024**3:.1f} GB, "
           f"Compute capability: {props.major}.{props.minor}")

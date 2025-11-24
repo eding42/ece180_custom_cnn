@@ -300,13 +300,13 @@ def main():
                         help="Input resolution (e.g., 224, 256, 320)")
     parser.add_argument("--epochs", type=int, default=2,
                         help="Number of training epochs")
-    parser.add_argument("--batch-size", type=int, default=96,
+    parser.add_argument("--batch-size", type=int, default=64,
                         help="Global batch size")
     parser.add_argument("--lr", type=float, default=0.1,
                         help="Base learning rate")
     parser.add_argument("--weight-decay", type=float, default=1e-4,
                         help="Weight decay for optimizer")
-    parser.add_argument("--workers", type=int, default=16,
+    parser.add_argument("--workers", type=int, default=8,
                         help="DataLoader workers per process")
     parser.add_argument("--fp16", action="store_true",
                         help="Use Torch AMP mixed precision (CUDA only)")
